@@ -8,13 +8,20 @@ async function onSubmit(event: FormSubmitEvent<any>) {
 </script>
 
 <template>
-  <UContainer>
-    <img src="/donut.png" alt="dev-and-donuts" class="w-32 mx-auto" />
-    <UButton
-      class="w-64 justify-center"
-      @click="onSubmit"
-    >
-      Login with GitHub
-    </UButton>
-  </UContainer>
+  <div class="h-full flex flex-col justify-center">
+    <UContainer>
+      <img src="/donut.png" alt="dev-and-donuts" class="w-32 mx-auto" />
+      <UButton
+      color="black"
+        leading-icon="i-simple-icons-github"
+        class="w-64 justify-center"
+        @click="onSubmit"
+        block
+      >
+        Login with GitHub
+      </UButton>
+    </UContainer>
+  </div>
+
+
 </template>
