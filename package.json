@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate && rm -rf pb_public && mv .output/public/ pb_public/ && rm -rf .output",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "typegen": "pocketbase-typegen --db ./pb_data/data.db --out utils/types.ts "

@@ -28,21 +28,21 @@
       :ui="{ body: { base: 'h-full flex flex-col justify-between' } }"
     >
       <div>
-        <h2 class="font-bold text-lg">{{ selectedItem.name }}</h2>
+        <h2 class="font-bold text-lg">{{ selectedItem?.name }}</h2>
         <img
-          :src="pb.files.getUrl(selectedItem, selectedItem.image)"
-          :alt="selectedItem.name"
+          :src="pb.files.getUrl(selectedItem, selectedItem?.image)"
+          :alt="selectedItem?.name"
           class="max-w-72 w-1/2 mx-auto rounded border border-solid border-gray-100"
         />
-        <div v-html="selectedItem.description"></div>
+        <div v-html="selectedItem?.description"></div>
       </div>
 
       <div class="space-y-2">
         <div class="flex justify-between">
           <p class="text-sm text-gray-500">
-            {{ selectedItem.amount }} in stock
+            {{ selectedItem?.amount }} in stock
           </p>
-          <p class="text-sm text-gray-500">{{ selectedItem.price }}€</p>
+          <p class="text-sm text-gray-500">{{ selectedItem?.price }}€</p>
         </div>
         <div class="flex justify-between">
           <UInput
@@ -61,19 +61,27 @@
 
 <script lang="ts" setup>
 import { pb } from "~/utils/pocketbase";
-import type { CartResponse } from "~/utils/types";
-const inventoryList = await pb.collection("inventory").getFullList();
+import type { CartResponse, InventoryResponse } from "~/utils/types";
+const inventoryList = ref<InventoryResponse[]>([]);
+const selectedItem = ref<InventoryResponse | undefined>(undefined);
 
-onMounted(() => {
+onMounted(async () => {
+  inventoryList.value = await pb.collection("inventory").getFullList();
+  if (inventoryList.value.length > 0) {
+    selectedItem.value = inventoryList.value[0];
+  }
+
   pb.collection("inventory").subscribe("*", (data) => {
+    if (!selectedItem.value?.id) return;
     selectedItem.value.amount = data.record.amount;
   });
 });
 
-const selectedItem = ref(inventoryList[0]);
 const orderAmount = ref(1);
 
 const orderItem = async () => {
+  if (!selectedItem.value) return;
+
   if (selectedItem.value.amount < orderAmount.value) {
     alert("Not enough stock");
     return;

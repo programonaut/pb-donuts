@@ -1,7 +1,7 @@
 <template>
   <UContainer>
     <UCard class="flex-1">
-      <h2 class="font-bold text-lg mb-2">Inventory</h2>
+      <h2 class="font-bold text-lg mb-2">Cart</h2>
       <ul class="space-y-2">
         <li
           v-for="cartItem in cartList"
@@ -55,29 +55,31 @@
 <script lang="ts" setup>
 import { pb } from "~/utils/pocketbase";
 import type { CartResponse, InventoryResponse } from "~/utils/types";
-const cartList = ref(
-  await pb
+const cartList = ref<CartResponse<{ item: InventoryResponse }>[]>([]);
+
+onMounted(async () => {
+  cartList.value = await pb
     .collection("cart")
     .getFullList<CartResponse<{ item: InventoryResponse }>>({
       expand: "item",
-    })
-);
+    });
 
-await pb.collection("cart").subscribe("*", (e) => {
-  if (e.action === "update") {
-    cartList.value = [
-      ...cartList.value.map((item) => {
-        if (item.id === e.record.id) {
-          item.amount = e.record.amount;
-        }
-        return item;
-      }),
-    ];
-  }
+  pb.collection("cart").subscribe("*", (e) => {
+    if (e.action === "update") {
+      cartList.value = [
+        ...cartList.value.map((item) => {
+          if (item.id === e.record.id) {
+            item.amount = e.record.amount;
+          }
+          return item;
+        }),
+      ];
+    }
 
-  if (e.action === "delete") {
-    cartList.value = cartList.value.filter((item) => item.id !== e.record.id);
-  }
+    if (e.action === "delete") {
+      cartList.value = cartList.value.filter((item) => item.id !== e.record.id);
+    }
+  });
 });
 
 const adjust = async (cartItem: CartResponse, amount: number) => {

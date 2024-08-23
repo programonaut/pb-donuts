@@ -10,7 +10,7 @@
           class="w-6 h-6"
         />
       </ULink>
-      <UChip :text="amount" size="2xl">
+      <UChip :text="amount ?? 0" size="2xl">
         <ULink to="/cart">
           <UIcon
             :name="
