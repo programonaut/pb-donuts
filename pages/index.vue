@@ -30,10 +30,20 @@
       <div>
         <h2 class="font-bold text-lg">{{ selectedItem?.name }}</h2>
         <img
-          :src="pb.files.getUrl(selectedItem, selectedItem?.image)"
+          v-if="selectedItem"
+          :src="pb.files.getUrl(selectedItem, selectedItem.image)"
           :alt="selectedItem?.name"
           class="max-w-72 w-1/2 mx-auto rounded border border-solid border-gray-100"
         />
+        <div
+          v-else
+          class="max-w-72 w-1/2 aspect-1 mx-auto flex items-center justify-center"
+        >
+          <UIcon
+            name="i-heroicons-arrow-path"
+            class="w-1/2 h-1/2 animate-spin text-gray-100"
+          />
+        </div>
         <div v-html="selectedItem?.description"></div>
       </div>
 
