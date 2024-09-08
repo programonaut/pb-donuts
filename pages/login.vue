@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import type { FormSubmitEvent } from "#ui/types";
-
-async function onSubmit(event: FormSubmitEvent<any>) {
-  await pb.collection("users").authWithOAuth2({ provider: "github" });
-  navigateTo("/");
-}
-</script>
-
 <template>
   <div class="h-full flex flex-col justify-center">
     <UContainer>
@@ -23,3 +14,14 @@ async function onSubmit(event: FormSubmitEvent<any>) {
     </UContainer>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { FormSubmitEvent } from "#ui/types";
+
+async function onSubmit(event: FormSubmitEvent<unknown>) {
+  await pb.collection("users").authWithOAuth2({ provider: "github" });
+  navigateTo("/");
+  // refresh page
+  reloadNuxtApp();
+}
+</script>
