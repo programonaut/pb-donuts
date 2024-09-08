@@ -75,7 +75,32 @@ onMounted(async () => {
     }
   });
 });
-const adjust = async (cartItem: CartResponse, amount: number) => {};
+const adjust = async (cartItem: CartResponse, amount: number) => {
+  console.log(cartItem.amount, amount);
+
+  if (cartItem.amount + amount === 0) return;
+
+  if (amount < 0) {
+    await pb
+      .collection("cart")
+      .update(cartItem.id, { amount: cartItem.amount + amount });
+  }
+
+  try {
+    const inventoryItem = await pb
+      .collection("inventory")
+      .getOne(cartItem.item);
+    await pb.collection("inventory").update(inventoryItem.id, {
+      amount: inventoryItem.amount - amount,
+    });
+
+    if (amount > 0) {
+      await pb
+        .collection("cart")
+        .update(cartItem.id, { amount: cartItem.amount + amount });
+    }
+  } catch (e) {}
+};
 
 const deleteItem = async (cartItem: CartResponse) => {};
 </script>
