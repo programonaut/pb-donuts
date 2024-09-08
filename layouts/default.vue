@@ -40,26 +40,12 @@ import type { ClientResponseError } from "pocketbase";
 import { pb } from "~/utils/pocketbase";
 const amount = ref(0);
 
-const getAmount = async () => {
-  try {
-    const allItems = await pb.collection("cart").getFullList();
-    amount.value = allItems.reduce((acc, item) => acc + item.amount, 0);
-  } catch (e) {
-    const error = e as ClientResponseError;
-    console.error(error.message);
-  }
-};
+const logout = () => {};
 
-const logout = () => {
-  pb.authStore.clear();
-  navigateTo("/login");
-  // refresh page
-  reloadNuxtApp();
-};
+const getAmount = async () => {};
 
 onMounted(() => {
   getAmount();
-  pb.collection("cart").subscribe("*", getAmount);
 });
 </script>
 

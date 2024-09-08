@@ -54,69 +54,13 @@
 
 <script lang="ts" setup>
 import { pb } from "~/utils/pocketbase";
-import type { CartResponse, InventoryResponse } from "~/utils/types";
-const cartList = ref<CartResponse<{ item: InventoryResponse }>[]>([]);
+const cartList = ref<[]>([]);
 
-onMounted(async () => {
-  cartList.value = await pb
-    .collection("cart")
-    .getFullList<CartResponse<{ item: InventoryResponse }>>({
-      expand: "item",
-    });
+onMounted(async () => {});
 
-  pb.collection("cart").subscribe("*", (e) => {
-    if (e.action === "update") {
-      cartList.value = [
-        ...cartList.value.map((item) => {
-          if (item.id === e.record.id) {
-            item.amount = e.record.amount;
-          }
-          return item;
-        }),
-      ];
-    }
+const adjust = async (cartItem: CartResponse, amount: number) => {};
 
-    if (e.action === "delete") {
-      cartList.value = cartList.value.filter((item) => item.id !== e.record.id);
-    }
-  });
-});
-
-const adjust = async (cartItem: CartResponse, amount: number) => {
-  console.log(cartItem.amount, amount);
-
-  if (cartItem.amount + amount === 0) return;
-
-  if (amount < 0) {
-    await pb
-      .collection("cart")
-      .update(cartItem.id, { amount: cartItem.amount + amount });
-  }
-
-  try {
-    const inventoryItem = await pb
-      .collection("inventory")
-      .getOne(cartItem.item);
-    await pb.collection("inventory").update(inventoryItem.id, {
-      amount: inventoryItem.amount - amount,
-    });
-
-    if (amount > 0) {
-      await pb
-        .collection("cart")
-        .update(cartItem.id, { amount: cartItem.amount + amount });
-    }
-  } catch (e) {}
-};
-
-const deleteItem = async (cartItem: CartResponse) => {
-  await pb.collection("cart").delete(cartItem.id);
-
-  const inventoryItem = await pb.collection("inventory").getOne(cartItem.item);
-  await pb.collection("inventory").update(inventoryItem.id, {
-    amount: inventoryItem.amount + cartItem.amount,
-  });
-};
+const deleteItem = async (cartItem: CartResponse) => {};
 </script>
 
 <style></style>

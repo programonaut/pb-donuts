@@ -71,65 +71,14 @@
 
 <script lang="ts" setup>
 import { pb } from "~/utils/pocketbase";
-import type { CartResponse, InventoryResponse } from "~/utils/types";
-const inventoryList = ref<InventoryResponse[]>([]);
-const selectedItem = ref<InventoryResponse | undefined>(undefined);
+const inventoryList = ref([]);
+const selectedItem = ref(undefined);
 
-onMounted(async () => {
-  inventoryList.value = await pb.collection("inventory").getFullList();
-  if (inventoryList.value.length > 0) {
-    selectedItem.value = inventoryList.value[0];
-  }
-
-  pb.collection("inventory").subscribe("*", (data) => {
-    if (!selectedItem.value?.id) return;
-    selectedItem.value.amount = data.record.amount;
-  });
-});
+onMounted(async () => {});
 
 const orderAmount = ref(1);
 
-const orderItem = async () => {
-  if (!selectedItem.value) return;
-
-  if (selectedItem.value.amount < orderAmount.value) {
-    alert("Not enough stock");
-    return;
-  }
-
-  if (!pb.authStore.model) {
-    alert("Please login first");
-    return;
-  }
-
-  // modify cart
-  let record: CartResponse | undefined;
-  try {
-    const exisiting = await pb
-      .collection("cart")
-      .getFirstListItem(
-        `user.id="${pb.authStore.model?.id}" && item.id="${selectedItem.value.id}"`
-      );
-    record = exisiting;
-  } catch (error) {}
-
-  if (record?.id) {
-    await pb.collection("cart").update(record.id, {
-      amount: record.amount + orderAmount.value,
-    });
-  } else {
-    await pb.collection("cart").create({
-      user: pb.authStore.model.id,
-      item: selectedItem.value.id,
-      amount: orderAmount.value,
-    });
-  }
-
-  // modify inventory
-  await pb.collection("inventory").update(selectedItem.value.id, {
-    amount: selectedItem.value.amount - orderAmount.value,
-  });
-};
+const orderItem = async () => {};
 </script>
 
 <style></style>

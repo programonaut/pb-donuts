@@ -18,10 +18,5 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "#ui/types";
 
-async function onSubmit(event: FormSubmitEvent<unknown>) {
-  await pb.collection("users").authWithOAuth2({ provider: "github" });
-  navigateTo("/");
-  // refresh page
-  reloadNuxtApp();
-}
+async function onSubmit(event: FormSubmitEvent<unknown>) {}
 </script>
