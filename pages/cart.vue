@@ -54,10 +54,27 @@
 
 <script lang="ts" setup>
 import { pb } from "~/utils/pocketbase";
-const cartList = ref<[]>([]);
+import type { CartResponse, InventoryResponse } from "~/utils/types";
+const cartList = ref<CartResponse<{ item: InventoryResponse }>[]>([]);
 
-onMounted(async () => {});
+onMounted(async () => {
+  pb.collection("cart").subscribe("*", (e) => {
+    if (e.action === "update") {
+      cartList.value = [
+        ...cartList.value.map((item) => {
+          if (item.id === e.record.id) {
+            item.amount = e.record.amount;
+          }
+          return item;
+        }),
+      ];
+    }
 
+    if (e.action === "delete") {
+      cartList.value = cartList.value.filter((item) => item.id !== e.record.id);
+    }
+  });
+});
 const adjust = async (cartItem: CartResponse, amount: number) => {};
 
 const deleteItem = async (cartItem: CartResponse) => {};

@@ -42,10 +42,19 @@ const amount = ref(0);
 
 const logout = () => {};
 
-const getAmount = async () => {};
+const getAmount = async () => {
+  try {
+    const allItems = await pb.collection("cart").getFullList();
+    amount.value = allItems.reduce((acc, item) => acc + item.amount, 0);
+  } catch (e) {
+    const error = e as ClientResponseError;
+    console.error(error.message);
+  }
+};
 
 onMounted(() => {
   getAmount();
+  pb.collection("cart").subscribe("*", getAmount);
 });
 </script>
 
