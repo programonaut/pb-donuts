@@ -7,3 +7,4 @@ wget -O pocketbase.zip https://github.com/pocketbase/pocketbase/releases/downloa
 
 ## Necessary npm packages
 - 'pocketbase'
+- 'pocketbase-typegen'
