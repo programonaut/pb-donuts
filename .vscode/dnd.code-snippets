@@ -1,5 +1,6 @@
 {
   "1-client (pocketbase.ts)": {
+    "prefix": "1-client (pocketbase.ts)",
     "body": [
       "import PocketBase from 'pocketbase';",
       "import type { TypedPocketBase } from './types';",
@@ -8,6 +9,7 @@
     ]
   },
   "2-login": {
+    "prefix": "2-login",
     "body": [
       "await pb.collection(\"users\").authWithOAuth2({ provider: \"github\" });",
       "// refresh page",
@@ -15,6 +17,7 @@
     ]
   },
   "3-logout": {
+    "prefix": "3-logout",
     "body": [
       "const logout = () => {",
       "  pb.authStore.clear();",
@@ -23,6 +26,7 @@
     ]
   },
   "4-guard (init.global.ts)": {
+    "prefix": "4-guard (init.global.ts)",
     "body": [
       "import { pb } from '~/utils/pocketbase'",
       "",
@@ -36,6 +40,7 @@
     ]
   },
   "5-fetch data onMount (index.vue)": {
+    "prefix": "5-fetch data onMount (index.vue)",
     "body": [
       "onMounted(async () => {",
       "  inventoryList.value = await pb.collection(\"inventory\").getFullList();",
@@ -51,6 +56,7 @@
     ]
   },
   "6-fetch data onMount (cart.vue - first call)": {
+    "prefix": "6-fetch data onMount (cart.vue - first call)",
     "body": [
       "onMounted(async () => {",
       "  cartList.value = await pb",
@@ -62,6 +68,7 @@
     ]
   },
   "7-deleteItem (cart.vue)": {
+    "prefix": "7-deleteItem (cart.vue)",
     "body": [
       "const deleteItem = async (cartItem: CartResponse) => {",
       "  await pb.collection(\"cart\").delete(cartItem.id);",
