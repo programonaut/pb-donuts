@@ -8,16 +8,17 @@
       "export const pb = new PocketBase('http://127.0.0.1:8090') as TypedPocketBase;"
     ]
   },
-  "2-login": {
-    "prefix": "2-login",
+  "3-login": {
+    "prefix": "3-login",
     "body": [
-      "await pb.collection(\"users\").authWithOAuth2({ provider: \"github\" });",
-      "// refresh page",
-      "reloadNuxtApp();"
+      "async function onSubmit(event: FormSubmitEvent<unknown>) {",
+      "  await pb.collection(\"users\").authWithOAuth2({ provider: \"github\" });",
+      "  reloadNuxtApp();",
+      "}"
     ]
   },
-  "3-logout": {
-    "prefix": "3-logout",
+  "4-logout": {
+    "prefix": "4-logout",
     "body": [
       "const logout = () => {",
       "  pb.authStore.clear();",
@@ -25,8 +26,8 @@
       "};"
     ]
   },
-  "4-guard (init.global.ts)": {
-    "prefix": "4-guard (init.global.ts)",
+  "2-guard (init.global.ts)": {
+    "prefix": "2-guard (init.global.ts)",
     "body": [
       "import { pb } from '~/utils/pocketbase'",
       "",
