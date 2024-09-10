@@ -1,0 +1,76 @@
+{
+  "1-client (pocketbase.ts)": {
+    "body": [
+      "import PocketBase from 'pocketbase';",
+      "import type { TypedPocketBase } from './types';",
+      "",
+      "export const pb = new PocketBase('http://127.0.0.1:8090') as TypedPocketBase;"
+    ]
+  },
+  "2-login": {
+    "body": [
+      "await pb.collection(\"users\").authWithOAuth2({ provider: \"github\" });",
+      "// refresh page",
+      "reloadNuxtApp();"
+    ]
+  },
+  "3-logout": {
+    "body": [
+      "const logout = () => {",
+      "  pb.authStore.clear();",
+      "  reloadNuxtApp();",
+      "};"
+    ]
+  },
+  "4-guard (init.global.ts)": {
+    "body": [
+      "import { pb } from '~/utils/pocketbase'",
+      "",
+      "export default defineNuxtRouteMiddleware((to, from) => {",
+      "  if (to.path !== '/login' && !pb.authStore.isValid) {",
+      "    return navigateTo('/login')",
+      "  } else if (to.path === '/login' && pb.authStore.isValid) {",
+      "    return navigateTo('/')",
+      "  }",
+      "})"
+    ]
+  },
+  "5-fetch data onMount (index.vue)": {
+    "body": [
+      "onMounted(async () => {",
+      "  inventoryList.value = await pb.collection(\"inventory\").getFullList();",
+      "  if (inventoryList.value.length > 0) {",
+      "    selectedItem.value = inventoryList.value[0];",
+      "  }",
+      "",
+      "  pb.collection(\"inventory\").subscribe(\"*\", (data) => {",
+      "    if (!selectedItem.value?.id) return;",
+      "    selectedItem.value.amount = data.record.amount;",
+      "  });",
+      "});"
+    ]
+  },
+  "6-fetch data onMount (cart.vue - first call)": {
+    "body": [
+      "onMounted(async () => {",
+      "  cartList.value = await pb",
+      "    .collection(\"cart\")",
+      "    .getFullList<CartResponse<{ item: InventoryResponse }>>({",
+      "      expand: \"item\",",
+      "    });",
+      ""
+    ]
+  },
+  "7-deleteItem (cart.vue)": {
+    "body": [
+      "const deleteItem = async (cartItem: CartResponse) => {",
+      "  await pb.collection(\"cart\").delete(cartItem.id);",
+      "",
+      "  const inventoryItem = await pb.collection(\"inventory\").getOne(cartItem.item);",
+      "  await pb.collection(\"inventory\").update(inventoryItem.id, {",
+      "    amount: inventoryItem.amount + cartItem.amount,",
+      "  });",
+      "};"
+    ]
+  }
+}
