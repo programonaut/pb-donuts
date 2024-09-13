@@ -58,6 +58,12 @@ import type { CartResponse, InventoryResponse } from "~/utils/types";
 const cartList = ref<CartResponse<{ item: InventoryResponse }>[]>([]);
 
 onMounted(async () => {
+  cartList.value = await pb
+    .collection("cart")
+    .getFullList<CartResponse<{ item: InventoryResponse }>>({
+      expand: "item",
+    });
+
   pb.collection("cart").subscribe("*", (e) => {
     if (e.action === "update") {
       cartList.value = [
@@ -102,7 +108,14 @@ const adjust = async (cartItem: CartResponse, amount: number) => {
   } catch (e) {}
 };
 
-const deleteItem = async (cartItem: CartResponse) => {};
+const deleteItem = async (cartItem: CartResponse) => {
+  await pb.collection("cart").delete(cartItem.id);
+
+  const inventoryItem = await pb.collection("inventory").getOne(cartItem.item);
+  await pb.collection("inventory").update(inventoryItem.id, {
+    amount: inventoryItem.amount + cartItem.amount,
+  });
+};
 </script>
 
 <style></style>

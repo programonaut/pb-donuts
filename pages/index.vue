@@ -75,7 +75,17 @@ import type { CartResponse, InventoryResponse } from "~/utils/types";
 const inventoryList = ref<InventoryResponse[]>([]);
 const selectedItem = ref<InventoryResponse | undefined>(undefined);
 
-onMounted(async () => {});
+onMounted(async () => {
+  inventoryList.value = await pb.collection("inventory").getFullList();
+  if (inventoryList.value.length > 0) {
+    selectedItem.value = inventoryList.value[0];
+  }
+
+  pb.collection("inventory").subscribe("*", (data) => {
+    if (!selectedItem.value?.id) return;
+    selectedItem.value.amount = data.record.amount;
+  });
+});
 
 const orderAmount = ref(1);
 

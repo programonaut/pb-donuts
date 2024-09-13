@@ -40,7 +40,10 @@ import type { ClientResponseError } from "pocketbase";
 import { pb } from "~/utils/pocketbase";
 const amount = ref(0);
 
-const logout = () => {};
+const logout = () => {
+  pb.authStore.clear();
+  reloadNuxtApp();
+};
 
 const getAmount = async () => {
   try {
